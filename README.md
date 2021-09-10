@@ -14,6 +14,10 @@
 2. 选课网存在 IP 级别的限流，**访问过于频繁可能会导致 IP 被封禁**。单个IP最多建立5个有效的会话。（参见`elective_client_pool_size`的参数说明）
 3. ***不要*** 把**同班号、有空位，但是不想选**的课放入选课计划；***不要*** 在选课网遭遇突发流量的时候**拥挤选课**。否则很可能遭遇 ***未知错误*** ！
 
+## 从2020秋季学期v5.0.1升级
+- 新的验证码识别模块依赖 `opencv`，运行命令 `pip3 install opencv-python` 以安装额外的依赖包。
+- PyTorch 版本需保证**大于等于 1.5.0**，否则无法读取 CNN 模型。
+
 ## 简单配置说明
 
 这一部分内容简化自[zhongxinghong/PKUAutoElective/README.md](https://github.com/zhongxinghong/PKUAutoElective/blob/master/README.md)，您也可以在本fork的`README_origin.md`中找到这一文件以获得详尽说明。
