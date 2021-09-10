@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # filename: elective.py
-# modified: 2019-09-10
+# modified: 2021-09-11
 
 import time
 import string
@@ -143,22 +143,22 @@ class ElectiveClient(BaseClient):
         )
         return r
 
-    def get_SupplyCancel(self, **kwargs):
+    def get_SupplyCancel(self, username, **kwargs):
         """ 补退选 """
         headers = _get_headers_with_referer(kwargs)
         headers["Cache-Control"] = "max-age=0"
         r = self._get(
-            url=ElectiveURL.SupplyCancel,
+            url=ElectiveURL.SupplyCancel+"?xh="+str(username),
             headers=headers,
             hooks=_hooks_check_title,
             **kwargs,
         )
         return r
 
-    def get_supplement(self, page=1, **kwargs):
+    def get_supplement(self, username, page=1, **kwargs):
         """ 补退选（第二页及以后） """
         assert page > 0
-        headers = _get_headers_with_referer(kwargs, ElectiveURL.SupplyCancel)
+        headers = _get_headers_with_referer(kwargs, ElectiveURL.SupplyCancel+"?xh="+str(username))
         headers["Cache-Control"] = "max-age=0"
         r = self._get(
             url=ElectiveURL.Supplement,
