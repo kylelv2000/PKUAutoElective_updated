@@ -17,7 +17,6 @@ from .environ import Environ
 from .config import AutoElectiveConfig
 from .logger import ConsoleLogger, FileLogger
 from .course import Course
-from .captcha import CaptchaRecognizer
 from .parser import get_tables, get_courses, get_courses_with_detail, get_sida
 from .hook import _dump_request
 from .iaaa import IAAAClient
@@ -25,6 +24,11 @@ from .elective import ElectiveClient
 from .const import CAPTCHA_CACHE_DIR, USER_AGENT_LIST, WEB_LOG_DIR, CNN_MODEL_FILE
 from .exceptions import *
 from ._internal import mkdir
+
+import ddddocr
+
+
+ocr = ddddocr.DdddOcr()
 
 environ = Environ()
 config = AutoElectiveConfig()
@@ -51,7 +55,6 @@ config.check_supply_cancel_page(supply_cancel_page)
 _USER_WEB_LOG_DIR = os.path.join(WEB_LOG_DIR, config.get_user_subpath())
 mkdir(_USER_WEB_LOG_DIR)
 
-recognizer = CaptchaRecognizer(CNN_MODEL_FILE)
 
 electivePool = Queue(maxsize=elective_client_pool_size)
 reloginPool = Queue(maxsize=elective_client_pool_size)
@@ -506,11 +509,12 @@ def run_elective_loop():
 
                     cout.info("Fetch a captcha")
                     r = elective.get_DrawServlet()
+                    #captcha = recognizer.recognize(r.content)
+                    captcha = ocr.classification(r.content)
 
-                    captcha = recognizer.recognize(r.content)
-                    cout.info("Recognition result: %s" % captcha.code)
+                    cout.info("Recognition result: %s" % captcha)
 
-                    r = elective.get_Validate(username, captcha.code)
+                    r = elective.get_Validate(username, captcha)
                     try:
                         res = r.json()["valid"]  # 可能会返回一个错误网页
                     except Exception as e:
@@ -520,11 +524,11 @@ def run_elective_loop():
                     if res == "2":
                         cout.info("Validation passed")
                         break
-                    elif res == "0":
-                        cout.info("Validation failed")
-                        captcha.save(CAPTCHA_CACHE_DIR)
-                        cout.info("Save %s to %s" % (captcha, CAPTCHA_CACHE_DIR))
-                        cout.info("Try again")
+                    # elif res == "0":
+                    #     cout.info("Validation failed")
+                    #     captcha.save(CAPTCHA_CACHE_DIR)
+                    #     cout.info("Save %s to %s" % (captcha, CAPTCHA_CACHE_DIR))
+                    #     cout.info("Try again")
                     else:
                         cout.warning("Unknown validation result: %s" % res)
 

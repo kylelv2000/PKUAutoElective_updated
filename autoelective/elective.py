@@ -189,9 +189,9 @@ class ElectiveClient(BaseClient):
     def get_Validate(self, username, code, **kwargs):
         """ 验证用户输入的验证码 """
         headers = _get_headers_with_referer(kwargs, ElectiveURL.SupplyCancel)
-        headers["Accept"] = "application/json, text/javascript, */*; q=0.01"
+        headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
         headers["Accept-Encoding"] = "gzip, deflate, br"
-        headers["Accept-Language"] = "en-US,en;q=0.9"
+        headers["Accept-Language"] = "zh-CN,zh;q=0.9"
         headers["X-Requested-With"] = "XMLHttpRequest"
         r = self._post(
             url=ElectiveURL.Validate,
